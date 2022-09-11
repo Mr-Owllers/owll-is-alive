@@ -2,7 +2,7 @@
 
 hi! this is my first discord bot that i made in python
 
-i previously used [replit](https://replit.com) and [uptimerobot](https://uptimerobot.com) to host my bot but because of some issues i decided to host it on codespaces
+i previously used [replit](https://replit.com) and [uptimerobot](https://uptimerobot.com) to host my bot but because of some issues i decided to host it on ~~codespaces~~ on Pie's (Pie#8009) server
 
 click [here](https://dsc.gg/owll) to add my bot on your server
 
