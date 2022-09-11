@@ -1,3 +1,8 @@
+# My additions
+prefix.json
+owners.json
+cogs/__pycache__/
+balances.json
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -1,0 +1,5 @@
+aiohttp
+log.py
+nextcord
+praw
+python-dotenv
