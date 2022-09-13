@@ -4,7 +4,10 @@ import os
 
 import nextcord
 from dotenv import load_dotenv
-from nextcord.ext import commands
+from nextcord.ext import commands, tasks
+import time
+import datetime as dt
+from itertools import cycle
 from logpy import Logger
 from logpy.log import Level, Format
 from logpy.ansi import ForegroundColor, BackgroundColor, Effect
@@ -53,14 +56,18 @@ def main():
     with open("owners.json", "r", encoding="utf-8") as file:
         owners = json.load(file)
 
+    start_time = 0.0
 
     @client.event
     async def on_ready():
-        logger.log("owll is alive!", info)
-        await client.change_presence(
-            status=nextcord.Status.online,
-            activity=nextcord.Game("bing chilling | owl.help"))
+        logger.log("owll is alive!", info) #hello
+        change_status.start()
 
+    cycle_act = cycle(["bing chilling | owl.help", "bingus | owl.help", "yeet | owl.help", "aquamaaan | owl.help"])
+
+    @tasks.loop(seconds=10)
+    async def change_status():
+        await client.change_presence(status=nextcord.Status.online, activity=nextcord.Game(next(cycle_act)))
 
     @client.command(help="change the prefix", aliases=["pre", "prefix", "prfx"])
     @commands.has_permissions(administrator=True)
@@ -122,6 +129,18 @@ def main():
                     brief="Shows ping")
     async def ping(ctx):
         await ctx.send(f"🏓 Pong!\n{round(client.latency * 1000)}ms")
+
+    client.launch_time = dt.datetime.utcnow()
+
+    @client.command(help="check bot uptime",
+                    brief="check uptime",
+                    aliases=["up"])
+    async def uptime(ctx):
+        delta_uptime = dt.datetime.utcnow() - client.launch_time
+        hours, remainder = divmod(int(delta_uptime.total_seconds()), 3600)
+        minutes, seconds = divmod(remainder, 60)
+        days, hours = divmod(hours, 24)
+        await ctx.send(f"Uptime Time: {days}d, {hours}h, {minutes}m, {seconds}s")
 
 
     @client.command(help="see how many servers the bot is in")
