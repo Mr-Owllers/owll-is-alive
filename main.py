@@ -124,6 +124,8 @@ def main():
         if filename.endswith(".py"):
             client.load_extension(f"cogs.{filename[:-3]}")
 
+    client.load_extension("onami")
+
 
     @client.command(help="Shows the ping/latency of the bot in miliseconds.",
                     brief="Shows ping")

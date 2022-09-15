@@ -4,3 +4,4 @@ nextcord
 praw
 python-dotenv
 datetime
+onami
