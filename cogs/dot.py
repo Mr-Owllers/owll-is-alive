@@ -69,8 +69,8 @@ class Dot(commands.Cog, description="dootle ville (https://dsc.gg/dottle)"):
             nick = member.name
             try:
                 await member.edit(nick = nick)
-            except nextcord.Forbidden as error:
-                await ctx.send(error)
+            except nextcord.Forbidden:
+                pass
 
             await ctx.send("unprefixed everyone")
 
@@ -89,8 +89,8 @@ class Dot(commands.Cog, description="dootle ville (https://dsc.gg/dottle)"):
             nick = f"{prefix} but {member.name}"
             try:
                 await member.edit(nick=nick)
-            except nextcord.Forbidden as error:
-                await ctx.send(error)
+            except nextcord.Forbidden:
+                pass
 
         await ctx.send(f"prefixed everyone with {prefix}")
 
