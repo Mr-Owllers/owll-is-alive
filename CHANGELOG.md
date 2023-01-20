@@ -1,6 +1,11 @@
 # Change Log
 
-## v1.0.5.9.1 (v1.0.6 is special) Sep. 11, 2022
+## v1.0.5.95 Jan. 21, 2023
+
+### Migrated-
+- to hikari + lightbulb
+
+## v1.0.5.91 (v1.0.6 is special) Sep. 11, 2022
 
 ### Switched-
 - to codespaces

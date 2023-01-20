@@ -1,7 +1,9 @@
 aiohttp
 log.py
-nextcord
+hikari
+hikari-lightbulb
 praw
 python-dotenv
 datetime
 onami
+psutil

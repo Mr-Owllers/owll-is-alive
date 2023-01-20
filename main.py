@@ -1,16 +1,12 @@
-"""a discord bot made in python"""
 import json
 import os
 
-import nextcord
+import hikari
+import lightbulb
 from dotenv import load_dotenv
-from nextcord.ext import commands, tasks
-import time
-import datetime as dt
-from itertools import cycle
 from logpy import Logger
-from logpy.log import Level, Format
-from logpy.ansi import ForegroundColor, BackgroundColor, Effect
+from logpy.ansi import BackgroundColor, Effect, ForegroundColor
+from logpy.log import Format, Level
 
 custom_format = Format(
     "[$date $time $level logger] $message",
@@ -27,178 +23,74 @@ info = Level(
 
 load_dotenv()
 
-intents = nextcord.Intents.default()
-intents.members = True
-intents.message_content = True
+def get_prefix(_client, ctx: lightbulb.Context):
+    """get prefix function"""
+    with open("prefix.json", "r", encoding="utf-8") as file:
+        prefixes = json.load(file)
 
-def main():
-    """main function"""
-    help_command = commands.DefaultHelpCommand(no_category="Other Commands")
+    guild_id = str(ctx.guild_id)
+    if guild_id in prefixes:
+        prfx = prefixes[guild_id]
+    else:
+        prfx = "owl."  # Prefix defaults to this if none is set for the server
+    return prfx
 
-    def get_prefix(_client, message):
-        """get prefix function"""
-        with open("prefix.json", "r", encoding="utf-8") as file:
-            prefixes = json.load(file)
+client = lightbulb.BotApp(
+    prefix=get_prefix,
+    token=os.getenv("TOKEN"),
+    intents=hikari.Intents.ALL,
+    help_slash_command=True
+)
 
-        guild_id = str(message.guild.id)
-        if guild_id in prefixes:
-            prefix = prefixes[guild_id]
-        else:
-            prefix = "owl."  # Prefix defaults to this if none is set for the server
-        return prefix
+with open("owners.json", "r", encoding="utf-8") as file:
+    owners = json.load(file)
 
-    client = commands.Bot(
-        command_prefix = get_prefix,
-        help_command = help_command,
-        intents=intents
+@lightbulb.Check
+def is_owner(ctx) -> bool:
+    return ctx.author.id in owners
+
+@client.listen(hikari.ShardReadyEvent)
+async def ready_listener(_):
+    logger.log("owll is alive!", info) #hello
+
+# extension stuff
+
+client.load_extensions_from("./extensions")
+
+@client.command
+@lightbulb.add_checks(is_owner)
+@lightbulb.option("ext_name", "which ext u wanna load?")
+@lightbulb.command("load", "loads an extension", hidden=True)
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+async def load(ctx):
+    ext = ctx.options.ext_name
+    client.load_extensions(f"extensions.{ext}")
+    await ctx.respond(f"{ext} loaded!")
+
+@client.command
+@lightbulb.add_checks(is_owner)
+@lightbulb.option("ext_name", "which ext u wanna unload?")
+@lightbulb.command("unload", "unloads an extension", hidden=True)
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+async def unload(ctx):
+    ext = ctx.options.ext_name
+    client.unload_extensions(f"extensions.{ext}")
+    await ctx.respond(f"{ext} unloaded!")
+
+@client.command
+@lightbulb.add_checks(is_owner)
+@lightbulb.option("ext_name", "which ext u wanna reload?")
+@lightbulb.command("reload", "reloads an extension", hidden=True)
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+async def reload(ctx):
+    ext = ctx.options.ext_name
+    client.reload_extensions(f"extensions.{ext}")
+    await ctx.respond(f"{ext} reloaded!")
+
+client.run(
+    status=hikari.Status.ONLINE,
+    activity=hikari.Activity(
+    name="in development",
+    type=hikari.ActivityType.PLAYING
     )
-
-    with open("owners.json", "r", encoding="utf-8") as file:
-        owners = json.load(file)
-
-    start_time = 0.0
-
-    @client.event
-    async def on_ready():
-        logger.log("owll is alive!", info) #hello
-        change_status.start()
-
-    cycle_act = cycle(["bing chilling | owl.help", "bingus | owl.help", "yeet | owl.help", "aquamaaan | owl.help"])
-
-    @tasks.loop(seconds=10)
-    async def change_status():
-        await client.change_presence(status=nextcord.Status.online, activity=nextcord.Game(next(cycle_act)))
-
-    @client.command(help="change the prefix", aliases=["pre", "prefix", "prfx"])
-    @commands.has_permissions(administrator=True)
-    async def setprefix(ctx, *args):
-        if len(args) < 1:
-            await ctx.send("No prefix specified!")
-            return
-
-        prefix = args[0]
-
-        if len(prefix) > 6:
-            await ctx.send(
-                "Prefix has more characters than the character limit! (6)")
-            return
-
-        with open("prefix.json", "r", encoding="utf-8") as file:
-            prefixes = json.load(file)
-
-        prefixes[str(ctx.guild.id)] = prefix
-
-        with open("prefix.json", "w", encoding="utf-8") as file:
-            file.write(json.dumps(prefixes, indent=4))
-
-        await ctx.send(f"Prefix set to {prefix}")
-        await ctx.guild.get_member(client.user.id).edit(nick=f"[{prefix}] owll")
-        await ctx.send(
-            f"Changed nickname to [{prefix}] owll")
-
-    @client.command(hidden=True)
-    async def load(ctx, extension):
-        if ctx.message.author.id not in owners:
-            return await ctx.send("you can't do that")
-        client.load_extension(f"cogs.{extension}")
-        await ctx.send(f"{extension} loaded")
-
-
-    @client.command(hidden=True)
-    async def unload(ctx, extension):
-        if ctx.message.author.id not in owners:
-            return await ctx.send("you can't do that")
-        client.unload_extension(f"cogs.{extension}")
-        await ctx.send(f"{extension} unloaded")
-
-
-    @client.command(hidden=True)
-    async def reload(ctx, extension):
-        if ctx.message.author.id not in owners:
-            return await ctx.send("you can't do that")
-        client.reload_extension(f"cogs.{extension}")
-        await ctx.send(f"{extension} reloaded")
-
-
-    for filename in os.listdir("./cogs"):
-        if filename.endswith(".py"):
-            client.load_extension(f"cogs.{filename[:-3]}")
-
-    client.load_extension("onami")
-
-
-    @client.command(help="Shows the ping/latency of the bot in miliseconds.",
-                    brief="Shows ping")
-    async def ping(ctx):
-        await ctx.send(f"🏓 Pong!\n{round(client.latency * 1000)}ms")
-
-    client.launch_time = dt.datetime.utcnow()
-
-    @client.command(help="check bot uptime",
-                    brief="check uptime",
-                    aliases=["up"])
-    async def uptime(ctx):
-        delta_uptime = dt.datetime.utcnow() - client.launch_time
-        hours, remainder = divmod(int(delta_uptime.total_seconds()), 3600)
-        minutes, seconds = divmod(remainder, 60)
-        days, hours = divmod(hours, 24)
-        await ctx.send(f"Uptime Time: {days}d, {hours}h, {minutes}m, {seconds}s")
-
-
-    @client.command(help="see how many servers the bot is in")
-    async def bot_in(ctx):
-        await ctx.send(f"I'm in {len(client.guilds)} servers")
-
-
-    @client.command(hidden=True)
-    async def bot_in_o(ctx):
-        if ctx.message.author.id not in owners:
-            return
-        await ctx.send("\n".join(guild.name for guild in client.guilds))
-
-    @client.event
-    async def on_command_error(
-        ctx, error
-    ):
-        if isinstance(error, commands.CommandOnCooldown
-                    ):  #command is on cooldown.
-            msg = f"Still on cooldown, please try again in {error.retry_after}s."
-            em13 = nextcord.Embed(
-                title="**Error Block**",
-                color=nextcord.Color.red())
-            em13.add_field(name="__Slowmode Error:__", value=msg)
-            await ctx.send(embed=em13
-                        )
-        if isinstance(
-                error, commands.MissingRequiredArgument
-        ):  #missing args
-            msg2 = "Please enter all the required arguments!"
-            em14 = nextcord.Embed(title = f"**{msg2}**")
-            em14.add_field(name = "__Expected Arguments:__", value=msg2)
-            await ctx.send(embed = em14)
-        if isinstance(
-                error, commands.MissingPermissions
-        ):  #missing perms
-            msg3 = "You are missing permissions to use that command!"
-            em15 = nextcord.Embed(title = "**Missing permissions**")
-            em15.add_field(name = "__Missing Permissions:__", value=msg3)
-            await ctx.send(embed = em15)
-        if isinstance(
-                error, commands.CommandNotFound
-        ):  #command not found error.
-            msg4 = "No command found!"
-            em16 = nextcord.Embed(title = f"**{msg4}**")
-            em16.add_field(name = "__Command Not Found:__", value=msg4)
-            await ctx.send(embed = em16)
-        if isinstance(
-                error, commands.CommandInvokeError
-        ):  #invalid arg
-            msg5 = "Invocation error"
-            em17 = nextcord.Embed(title = msg5)
-            em17.add_field(name = "__Invocation error__", value = str(error))
-            await ctx.send(embed = em17)
-
-    client.run(os.getenv("TOKEN"))
-
-if __name__ == "__main__":
-    main()
+)
