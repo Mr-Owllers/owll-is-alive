@@ -7,3 +7,6 @@ python-dotenv
 datetime
 onami
 psutil
+lavasnek_rs
+uvloop
+spotipy

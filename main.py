@@ -87,6 +87,12 @@ async def reload(ctx):
     client.reload_extensions(f"extensions.{ext}")
     await ctx.respond(f"{ext} reloaded!")
 
+if __name__ == "__main__":
+    if os.name != "nt":
+        import uvloop
+
+        uvloop.install()
+
 client.run(
     status=hikari.Status.ONLINE,
     activity=hikari.Activity(

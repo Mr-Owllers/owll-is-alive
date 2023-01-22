@@ -3,6 +3,9 @@ prefix.json
 owners.json
 extensions/__pycache__/
 balances.json
+application.yml
+logs/
+Lavalink.jar
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

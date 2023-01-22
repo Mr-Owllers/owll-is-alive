@@ -1,5 +1,12 @@
 # Change Log
 
+## v1.0.5.99 Jan. 22, 2023
+
+### Added-
+-[dot.py](extensions/dot.py)
+-[random.py](extensions/random.py)
+-[music.py](extensions/music.py) \[in development\]
+
 ## v1.0.5.95 Jan. 21, 2023
 
 ### Migrated-
@@ -10,6 +17,8 @@
 ### Switched-
 - to codespaces
 
+
+## OLD!!
 ## v1.0.5.9 Dec. 10, 2021
 
 ### Fixed-

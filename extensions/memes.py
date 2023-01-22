@@ -18,7 +18,7 @@ reddit = praw.Reddit(
 plugin = lightbulb.Plugin("memes", "bing chillin")
 
 @plugin.command
-@lightbulb.option("subred", "where to find sauce", type=str, default="memes")
+@lightbulb.option("subred", "where to find sauce", str, default="memes")
 @lightbulb.command("reddit", "bananas", aliases=["memes"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def memes(ctx):
@@ -53,11 +53,11 @@ async def memes(ctx):
     if submission.over_18:
         await ctx.respond("this post is nsfw :(")
     else:
-        await ctx.respond(embed = embed)
+        await ctx.respond(embed)
 
 @plugin.command
 @lightbulb.add_checks(lightbulb.nsfw_channel_only)
-@lightbulb.option("subred", "where to find memes", type=str, default="nsfw")
+@lightbulb.option("subred", "where to find memes", str, default="nsfw")
 @lightbulb.command("reddit-nsfw", "black bananas", aliases=["nsfw"], nsfw=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def nsfw(ctx):
@@ -89,7 +89,7 @@ async def nsfw(ctx):
         f"{comments} comments | requested by {ctx.author.username}"
     )
 
-    await ctx.respond(embed = embed)
+    await ctx.respond(embed)
 
 def load(client):
     client.add_plugin(plugin)

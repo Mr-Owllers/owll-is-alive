@@ -35,7 +35,7 @@ async def prefix(ctx):
 
 @plugin.command
 @lightbulb.add_checks(lightbulb.has_guild_permissions(hikari.Permissions.MANAGE_MESSAGES))
-@lightbulb.option("amount", "amount of messages to purge", type=int)
+@lightbulb.option("amount", "amount of messages to purge", int)
 @lightbulb.command("purhe", "purge messages", aliases=["clear"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def purge(ctx):
@@ -46,8 +46,8 @@ async def purge(ctx):
 
 @plugin.command
 @lightbulb.add_checks(lightbulb.has_guild_permissions(hikari.Permissions.KICK_MEMBERS))
-@lightbulb.option("member", "member", type=hikari.Member, required=True)
-@lightbulb.option("reason", "reason", type=str, required=True)
+@lightbulb.option("member", "member", hikari.Member, required=True)
+@lightbulb.option("reason", "reason", str, required=True)
 @lightbulb.command("kick", "kick an annoying member")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def kick(ctx):
@@ -59,8 +59,8 @@ async def kick(ctx):
 
 @plugin.command()
 @lightbulb.add_checks(lightbulb.has_guild_permissions(hikari.Permissions.BAN_MEMBERS))
-@lightbulb.option("member", "member", type=hikari.Member, required=True)
-@lightbulb.option("reason", "reason", type=str, required=True)
+@lightbulb.option("member", "member", hikari.Member, required=True)
+@lightbulb.option("reason", "reason", str, required=True)
 @lightbulb.command("ban", "bans the member")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def ban(ctx):
@@ -69,8 +69,8 @@ async def ban(ctx):
 
 @plugin.command()
 @lightbulb.add_checks(lightbulb.has_guild_permissions(hikari.Permissions.BAN_MEMBERS))
-@lightbulb.option("member", "member", type=hikari.Member, required=True)
-@lightbulb.option("reason", "reason", type=str, required=True)
+@lightbulb.option("member", "member", hikari.Member, required=True)
+@lightbulb.option("reason", "reason", str, required=True)
 @lightbulb.command("unban", "unbans the member")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def unban(ctx):
