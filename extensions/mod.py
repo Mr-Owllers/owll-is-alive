@@ -57,7 +57,7 @@ async def kick(ctx):
 
 
 
-@plugin.command()
+@plugin.command
 @lightbulb.add_checks(lightbulb.has_guild_permissions(hikari.Permissions.BAN_MEMBERS))
 @lightbulb.option("member", "member", hikari.Member, required=True)
 @lightbulb.option("reason", "reason", str, required=True)
@@ -67,7 +67,7 @@ async def ban(ctx):
     await ctx.options.member.ban(reason=ctx.options.reason)
     await ctx.respond(f"{ctx.options.member.mention} has been banned")
 
-@plugin.command()
+@plugin.command
 @lightbulb.add_checks(lightbulb.has_guild_permissions(hikari.Permissions.BAN_MEMBERS))
 @lightbulb.option("member", "member", hikari.Member, required=True)
 @lightbulb.option("reason", "reason", str, required=True)
@@ -77,7 +77,7 @@ async def unban(ctx):
     await ctx.get_guild().unban(user=ctx.options.member, reason=ctx.options.reason)
     await ctx.respond(f"{ctx.options.member.mention} has been unbanned")
 
-@plugin.command()
+@plugin.command
 @lightbulb.add_checks(lightbulb.has_guild_permissions(hikari.Permissions.BAN_MEMBERS))
 @lightbulb.command("bans", "see the list of banned members in this server")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
