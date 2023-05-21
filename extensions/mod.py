@@ -77,7 +77,8 @@ async def unban(ctx):
     await ctx.get_guild().unban(user=ctx.options.member, reason=ctx.options.reason)
     await ctx.respond(f"{ctx.options.member.mention} has been unbanned")
 
-@plugin.command
+@plugin.command()
+@lightbulb.add_checks(lightbulb.has_guild_permissions(hikari.Permissions.BAN_MEMBERS))
 @lightbulb.command("bans", "see the list of banned members in this server")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def bans(ctx):

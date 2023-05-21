@@ -73,7 +73,7 @@ async def hug(ctx):
         return
 
     async with aiohttp.ClientSession() as c_s:
-            async with c_s.get("https://some-random-api.ml/animu/hug") as res:
+            async with c_s.get("https://some-random-api.com/animu/hug") as res:
                 if res.ok:
                     res = await res.json()
                     huglist.append(res["link"])
