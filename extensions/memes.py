@@ -19,7 +19,7 @@ plugin = lightbulb.Plugin("memes", "bing chillin")
 
 @plugin.command
 @lightbulb.option("subred", "where to find sauce", str, default="memes")
-@lightbulb.command("reddit", "bananas", aliases=["memes"])
+@lightbulb.command("reddit", "bananas", aliases=["meme"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def memes(ctx):
     red = str(ctx.options.subred)
