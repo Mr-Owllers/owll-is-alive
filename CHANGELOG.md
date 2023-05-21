@@ -1,6 +1,6 @@
 # Change Log
 
-## v1.0.5.99 Jan. 22, 2023
+## v1.0.6 Jan. 22, 2023
 
 ### Added-
 -[dot.py](extensions/dot.py)
