@@ -6,6 +6,8 @@ balances.json
 application.yml
 logs/
 Lavalink.jar
+nohup.out
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
