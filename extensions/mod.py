@@ -36,7 +36,7 @@ async def prefix(ctx):
 @plugin.command
 @lightbulb.add_checks(lightbulb.has_guild_permissions(hikari.Permissions.MANAGE_MESSAGES))
 @lightbulb.option("amount", "amount of messages to purge", int)
-@lightbulb.command("purhe", "purge messages", aliases=["clear"])
+@lightbulb.command("purge", "purge messages", aliases=["clear"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def purge(ctx):
     num_msgs = ctx.options.messages
