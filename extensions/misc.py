@@ -20,7 +20,7 @@ plugin.d.counter = datetime.now()
 @lightbulb.command("ping", "Gives the latency of the bot")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def ping(ctx):
-    await ctx.respond(f"🏓 Pong!\n{round(client.heartbeat_latency * 1000)}ms")
+    await ctx.respond(f"🏓 Pong!\n{round(ctx.bot.heartbeat_latency * 1000)}ms")
 
 @plugin.command
 @lightbulb.command("stats", "Get statistics info of the bot.", aliases=["status, uptime"])
