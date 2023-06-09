@@ -56,7 +56,7 @@ async def memes(ctx):
         await ctx.respond(embed)
 
 @plugin.command
-@lightbulb.option("subred", "where to find memes", str, default="nsfw")
+@lightbulb.option("subred", "where to find memes", str, default="hentai")
 @lightbulb.command("reddit-nsfw", "big black bananas", aliases=["nsfw"], nsfw=True)
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def nsfw(ctx):
