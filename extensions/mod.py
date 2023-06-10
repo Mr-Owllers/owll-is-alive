@@ -13,6 +13,7 @@ plugin = lightbulb.Plugin("admin", "admin commands")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def prefix(ctx):
     prfx = ctx.options.prefix
+    nick = f"[{prfx}] owll"
     guild_id = str(ctx.guild_id)
     if len(prfx) > 6:
         await ctx.respond("prefix must be shorter than 6 characters")
@@ -22,7 +23,10 @@ async def prefix(ctx):
         prefixes = json.load(file)
         
         if prfx == "owl.":
-            del prefixes[guild_id]
+            try:
+                del prefixes[guild_id]
+            except KeyError:
+                await ctx.respond("prefix is already set to default")
         else:
             prefixes[guild_id] = prfx
 
@@ -31,7 +35,8 @@ async def prefix(ctx):
 
         file.write(json.dumps(prefixes, indent=4))
 
-    await ctx.respond(f"Prefix set to {prfx}")
+    await ctx.respond(f"prefix set to {prfx}\nnickname set to {nick}")
+    await ctx.bot.rest.edit_my_member(ctx.guild_id, nickname=nick)
 
 @plugin.command
 @lightbulb.add_checks(lightbulb.has_guild_permissions(hikari.Permissions.MANAGE_MESSAGES))
