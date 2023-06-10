@@ -18,7 +18,7 @@ async def unyeet(ctx):
     await ctx.respond("┬─┬ ノ( ゜-゜ノ)")
 
 @plugin.command
-@lightbulb.option("question", "ask the question", type=str, required=True)
+@lightbulb.option("question", "ask the question", type=str, required=True, modifier=lightbulb.OptionModifier.CONSUME_REST)
 @lightbulb.command("11ball", "the great magic 11ball")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def _11ball(ctx):
@@ -36,23 +36,23 @@ async def _11ball(ctx):
 @lightbulb.command("rps", "rock, paper, scissors")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def rps(ctx):
-    player = ctx.options.item
+    player = ctx.options.item.lower()
     choices = random.choice(["👊", "✋", "✌️"])
-    if player == "r":
+    if player == "r" or player == "rock" or player == "👊":
         if choices == "👊":
             await ctx.respond("u chose 👊\ni chose 👊\ndraw")
         elif choices == "✋":
             await ctx.respond("u chose 👊\ni chose ✋\nyou lose")
         else:
             await ctx.respond("u chose 👊\ni chose ✌️\nyou win")
-    elif player == "p":
+    elif player == "p" or player == "paper" or player == "✋":
         if choices == "👊":
             await ctx.respond("u chose ✋\ni chose 👊\nyou win")
         elif choices == "✋":
            await ctx.respond("u chose ✋\ni chose ✋\ndraw")
         else:
             await ctx.respond("u chose ✋\ni chose ✌️\nyou lose")
-    elif player == "s":
+    elif player == "s" or player == "scissors" or player == "✌️":
         if choices == "👊":
             await ctx.respond("u chose ✌️\ni chose 👊\nyou lose")
         elif choices == "✋":
@@ -60,10 +60,10 @@ async def rps(ctx):
         else:
             await ctx.respond("u chose ✌️\ni chose ✌️\ndraw")
     else:
-        await ctx.respond("choose r, p or s!")
+        await ctx.respond("use either [r, p, s], [rock, paper, scissors], or [👊, ✋, ✌️]")
 
 @plugin.command
-@lightbulb.option("text", "what to say", type=str, required=True)
+@lightbulb.option("text", "what to say", type=str, required=True, modifier=lightbulb.OptionModifier.CONSUME_REST)
 @lightbulb.command("echo", "echo... echo... echo", aliases=["say"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def echo(ctx):

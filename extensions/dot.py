@@ -44,41 +44,7 @@ async def finddot(ctx):
         await ctx.respond(embed)
     else:
         await ctx.respond(f"No users with prefix \"{prefix}\" found")
-
-@plugin.command
-@lightbulb.add_checks(lightbulb.has_guild_permissions(hikari.Permissions.MANAGE_NICKNAMES))
-@lightbulb.option("arg", "what prefix u want", str, default=".")
-@lightbulb.command("dot", "prefix everyone")
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def dot(ctx):
-    prefix = ctx.options.arg
-
-    members = ctx.get_guild().get_members().values()
-    for member in members:
-        nick = f"{prefix} but {member.username}"
-        err = 0
-        try:
-            await ctx.bot.rest.edit_member(ctx.guild_id, user=member.id,nickname=nick)
-        except hikari.ForbiddenError:
-            err += 1
-
-    await ctx.respond(f"prefixed everyone with {prefix}\n{err} not prefixed\nput the owll role at the top for least errors")
-
-@plugin.command
-@lightbulb.add_checks(lightbulb.has_guild_permissions(hikari.Permissions.MANAGE_NICKNAMES))
-@lightbulb.command("undot", "unprefix everyone")
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def undot(ctx):
-    members = ctx.get_guild().get_members().values()
-    for member in members:
-        err = 0
-        try:
-            await ctx.bot.rest.edit_member(ctx.guild_id, user=member.id,nickname=None)
-        except hikari.ForbiddenError:
-            err += 1
-
-    await ctx.respond(f"unprefixed everyone\n{err} not prefixed\nput the owll role at the top for least errors")
-
+        
 @plugin.command
 @lightbulb.command("whydot", "wtf r dot commands?")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)

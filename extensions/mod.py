@@ -26,7 +26,7 @@ async def prefix(ctx):
             try:
                 del prefixes[guild_id]
             except KeyError:
-                await ctx.respond("prefix is already set to default")
+                return await ctx.respond("prefix is already set to default")
         else:
             prefixes[guild_id] = prfx
 
@@ -44,7 +44,7 @@ async def prefix(ctx):
 @lightbulb.command("purge", "purge messages", aliases=["clear"])
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def purge(ctx):
-    num_msgs = ctx.options.messages
+    num_msgs = ctx.options.amount
     channel = ctx.get_channel()
     messages = list(await channel.fetch_history().limit(num_msgs+ 1))
     await ctx.app.rest.delete_messages(channel, messages)
@@ -74,13 +74,23 @@ async def ban(ctx):
 
 @plugin.command
 @lightbulb.add_checks(lightbulb.has_guild_permissions(hikari.Permissions.BAN_MEMBERS))
-@lightbulb.option("member", "member", hikari.Member, required=True)
+@lightbulb.option("member", "member", str, required=True)
 @lightbulb.option("reason", "reason", str, required=True)
 @lightbulb.command("unban", "unbans the member")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def unban(ctx):
-    await ctx.get_guild().unban(user=ctx.options.member, reason=ctx.options.reason)
-    await ctx.respond(f"{ctx.options.member.mention} has been unbanned")
+    try:
+        await ctx.get_guild().unban(user=ctx.options.member, reason=ctx.options.reason)
+        await ctx.respond(f"{ctx.options.member.mention} has been unbanned")
+    except Exception as e:
+        if isinstance(e, hikari.errors.ForbiddenError):
+            await ctx.respond("I do not have permission to unban this member")
+        elif isinstance(e, hikari.errors.NotFoundError):
+            await ctx.respond("This member is not banned")
+        else:
+            await ctx.respond(
+                "are you using the user id or not? if not the get the user id by doing `owl.bans` or `/bans`, if you are then try wrapping the user id in quotes (\"\")"
+            )  
 
 @plugin.command
 @lightbulb.add_checks(lightbulb.has_guild_permissions(hikari.Permissions.BAN_MEMBERS))
