@@ -18,7 +18,7 @@ async def prefix(ctx):
         await ctx.respond("prefix must be shorter than 6 characters")
         return
 
-    with open("../prefix.json", "r+", encoding="utf-8") as file:
+    with open("prefix.json", "r+", encoding="utf-8") as file:
         prefixes = json.load(file)
         
         if prfx == "owl.":
