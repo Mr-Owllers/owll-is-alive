@@ -64,8 +64,11 @@ client.load_extensions_from("./extensions")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def load(ctx):
     ext = ctx.options.ext_name
-    client.load_extensions(f"extensions.{ext}")
-    await ctx.respond(f"{ext} loaded!")
+    try:
+        client.load_extensions(f"extensions.{ext}")
+        await ctx.respond(f"{ext} loaded!")
+    except lightbulb.errors.ExtensionAlreadyLoaded:
+        await ctx.respond(f"{ext} already loaded!")
 
 @client.command
 @lightbulb.add_checks(is_owner)
@@ -74,8 +77,11 @@ async def load(ctx):
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def unload(ctx):
     ext = ctx.options.ext_name
-    client.unload_extensions(f"extensions.{ext}")
-    await ctx.respond(f"{ext} unloaded!")
+    try:
+        client.unload_extensions(f"extensions.{ext}")
+        await ctx.respond(f"{ext} unloaded!")
+    except lightbulb.errors.ExtensionNotLoaded:
+        await ctx.respond(f"{ext} not loaded!")
 
 @client.command
 @lightbulb.add_checks(is_owner)
@@ -84,8 +90,11 @@ async def unload(ctx):
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def reload(ctx):
     ext = ctx.options.ext_name
-    client.reload_extensions(f"extensions.{ext}")
-    await ctx.respond(f"{ext} reloaded!")
+    try:
+        client.reload_extensions(f"extensions.{ext}")
+        await ctx.respond(f"{ext} reloaded!")
+    except lightbulb.errors.ExtensionNotLoaded:
+        await ctx.respond(f"{ext} not loaded!")
 
 
 client.run(

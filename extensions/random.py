@@ -23,7 +23,7 @@ plugin = lightbulb.Plugin("random", "some random commands")
 async def invite(ctx):
     embed = hikari.Embed(
         title="Invite me!",
-        description="Invite me by pressing [here](https://dsc/owll)",
+        description="Invite me by pressing [here](https://dsc.gg/owll)",
         color=0x2b6ed9
     )
     embed.set_author(name=AUTHOR, icon=ICON)
