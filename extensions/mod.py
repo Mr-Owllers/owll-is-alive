@@ -51,8 +51,8 @@ async def purge(ctx):
 
 @plugin.command
 @lightbulb.add_checks(lightbulb.has_guild_permissions(hikari.Permissions.KICK_MEMBERS))
+@lightbulb.option("reason", "reason", str, required=False, modifier=lightbulb.OptionModifier.CONSUME_REST)
 @lightbulb.option("member", "member", hikari.Member, required=True)
-@lightbulb.option("reason", "reason", str, required=True)
 @lightbulb.command("kick", "kick an annoying member")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def kick(ctx):
@@ -64,8 +64,8 @@ async def kick(ctx):
 
 @plugin.command
 @lightbulb.add_checks(lightbulb.has_guild_permissions(hikari.Permissions.BAN_MEMBERS))
+@lightbulb.option("reason", "reason", str, required=False, modifier=lightbulb.OptionModifier.CONSUME_REST)
 @lightbulb.option("member", "member", hikari.Member, required=True)
-@lightbulb.option("reason", "reason", str, required=True)
 @lightbulb.command("ban", "bans the member")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def ban(ctx):
@@ -74,8 +74,8 @@ async def ban(ctx):
 
 @plugin.command
 @lightbulb.add_checks(lightbulb.has_guild_permissions(hikari.Permissions.BAN_MEMBERS))
+@lightbulb.option("reason", "reason", str, required=False, modifier=lightbulb.OptionModifier.CONSUME_REST)
 @lightbulb.option("member", "member", str, required=True)
-@lightbulb.option("reason", "reason", str, required=True)
 @lightbulb.command("unban", "unbans the member")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def unban(ctx):
