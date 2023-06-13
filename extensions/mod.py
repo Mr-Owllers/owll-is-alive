@@ -56,21 +56,36 @@ async def purge(ctx):
 @lightbulb.command("kick", "kick an annoying member")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def kick(ctx):
-    await ctx.options.member.kick(reason=ctx.options.reason)
-    await ctx.respond(f"{ctx.options.member.mention} has been kicked")
-
+    if ctx.options.reason == None:
+        reason = "No Reason Provided."
+    else:
+        reason = ctx.options.reason
+        
+    try:
+        await ctx.options.member.kick(reason=reason)
+        await ctx.respond(f"{ctx.options.member.mention} has been kicked")
+    except hikari.errors.NotFoundErorr:
+        await ctx.respond("member is not found")
 
 
 
 @plugin.command
 @lightbulb.add_checks(lightbulb.has_guild_permissions(hikari.Permissions.BAN_MEMBERS))
-@lightbulb.option("reason", "reason", str, required=False, modifier=lightbulb.OptionModifier.CONSUME_REST)
+@lightbulb.option("reason", "reason", str, required=False, modifier=lightbulb.OptionModifier.CONSUME_REST, default="No Reason Provided.")
 @lightbulb.option("member", "member", hikari.Member, required=True)
 @lightbulb.command("ban", "bans the member")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def ban(ctx):
-    await ctx.options.member.ban(reason=ctx.options.reason)
-    await ctx.respond(f"{ctx.options.member.mention} has been banned")
+    if ctx.options.reason == None:
+        reason = "No Reason Provided."
+    else:
+        reason = ctx.options.reason
+        
+    try:
+        await ctx.options.member.ban(reason=reason)
+        await ctx.respond(f"{ctx.options.member.mention} has been banned")
+    except hikari.errors.NotFoundErorr:
+        await ctx.respond("member is not found")
 
 @plugin.command
 @lightbulb.add_checks(lightbulb.has_guild_permissions(hikari.Permissions.BAN_MEMBERS))
@@ -79,8 +94,13 @@ async def ban(ctx):
 @lightbulb.command("unban", "unbans the member")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def unban(ctx):
+    if ctx.options.reason == None:
+        reason = "No Reason Provided."
+    else:
+        reason = ctx.options.reason
+        
     try:
-        await ctx.get_guild().unban(user=ctx.options.member, reason=ctx.options.reason)
+        await ctx.get_guild().unban(user=ctx.options.member, reason=reason)
         await ctx.respond(f"{ctx.options.member.mention} has been unbanned")
     except Exception as e:
         if isinstance(e, hikari.errors.ForbiddenError):
@@ -112,7 +132,7 @@ async def bans(ctx):
     else:
         for n, users in enumerate(banlist, start=1):
             lst.add_line(
-                f"**{n}. {users.user}**:{users.user.id} ({users.reason or 'No Reason Provided.'})"
+                f"**{n}. {users.user}**:{users.user.id} ({users.reason})"
             )
 
     navigator = nav.ButtonNavigator(lst.build_pages())
