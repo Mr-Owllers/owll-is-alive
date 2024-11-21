@@ -1,7 +1,6 @@
 aiohttp
 log.py
-hikari
-hikari-lightbulb
+discord[voice]
 praw
 python-dotenv
 datetime
@@ -9,3 +8,4 @@ psutil
 lavasnek_rs
 uvloop
 spotipy
+asyncio

@@ -1,18 +1,15 @@
 import json
 import os
 
-import hikari
-import lightbulb
+import discord
+from discord.ext import commands
 from dotenv import load_dotenv
 from logpy import Logger
 from logpy.ansi import BackgroundColor, Effect, ForegroundColor
 from logpy.log import Format, Level
+import asyncio
 
-custom_format = Format(
-    "[$date $time $level logger] $message",
-    "%Y-%m-%d",
-    "%H:%M:%S"
-)
+custom_format = Format("$date $time $level     $message", "%Y-%m-%d", "%H:%M:%S")
 logger = Logger(custom_format)
 info = Level(
     "INFO",
@@ -23,84 +20,64 @@ info = Level(
 
 load_dotenv()
 
-def get_prefix(_client, ctx: lightbulb.Context):
-    """get prefix function"""
-    with open("prefix.json", "r", encoding="utf-8") as file:
-        prefixes = json.load(file)
+intents = discord.Intents.default()
+intents.message_content = True
+intents.members = True
 
-    guild_id = str(ctx.guild_id)
-    if guild_id in prefixes:
-        prfx = prefixes[guild_id]
-    else:
-        prfx = "owl."  # Prefix defaults to this if none is set for the server
-    return prfx
+help_command = commands.DefaultHelpCommand(no_category="Other Commands")
 
-client = lightbulb.BotApp(
-    prefix=get_prefix,
-    token=os.getenv("TOKEN"),
-    intents=hikari.Intents.ALL,
-    help_slash_command=True
+# get owners
+def get_owners():
+    with open("owners.json", "r") as f:
+        owners = json.load(f)
+
+    return owners
+
+def get_prefix(bot, message):
+    with open("prefix.json", "r") as f:
+        prefix = json.load(f)
+
+    return prefix.get(str(message.guild.id), "owl.")
+
+bot = commands.Bot(
+    command_prefix=get_prefix, help_command=help_command, intents=intents
 )
 
-with open("owners.json", "r", encoding="utf-8") as file:
-    owners = json.load(file)
+bot.owners = get_owners()
 
-@lightbulb.Check
-def is_owner(ctx) -> bool:
-    return ctx.author.id in owners
+@bot.event
+async def on_ready():
+    logger.log(f"{bot.user.name} is alive!", info)
 
-@client.listen(hikari.ShardReadyEvent)
-async def ready_listener(_):
-    logger.log("owll is alive!", info) #hello
+@bot.hybrid_command()
+async def ping(ctx):
+    await ctx.send(f":ping_pong: Pong!\n{round(bot.latency * 1000)}ms")
 
-# extension stuff
+# cogs
+async def cogs():
+    for filename in os.listdir("./cogs"):
+        if filename.endswith(".py"):
+            await bot.load_extension(f"cogs.{filename[:-3]}")
+            logger.log(f"Loaded cog {filename[:-3]}", info)
 
-client.load_extensions_from("./extensions")
+@bot.hybrid_command()
+async def load(ctx, extension):
+    await bot.load_extension(f"cogs.{extension}")
+    await ctx.send(f"Loaded {extension}")
 
-@client.command
-@lightbulb.add_checks(is_owner)
-@lightbulb.option("ext_name", "which ext u wanna load?")
-@lightbulb.command("load", "loads an extension", hidden=True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def load(ctx):
-    ext = ctx.options.ext_name
-    try:
-        client.load_extensions(f"extensions.{ext}")
-        await ctx.respond(f"{ext} loaded!")
-    except lightbulb.errors.ExtensionAlreadyLoaded:
-        await ctx.respond(f"{ext} already loaded!")
+@bot.hybrid_command()
+async def unload(ctx, extension):
+    await bot.unload_extension(f"cogs.{extension}")
+    await ctx.send(f"Unloaded {extension}")
 
-@client.command
-@lightbulb.add_checks(is_owner)
-@lightbulb.option("ext_name", "which ext u wanna unload?")
-@lightbulb.command("unload", "unloads an extension", hidden=True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def unload(ctx):
-    ext = ctx.options.ext_name
-    try:
-        client.unload_extensions(f"extensions.{ext}")
-        await ctx.respond(f"{ext} unloaded!")
-    except lightbulb.errors.ExtensionNotLoaded:
-        await ctx.respond(f"{ext} not loaded!")
+@bot.hybrid_command()
+async def reload(ctx, extension):
+    await bot.reload_extension(f"cogs.{extension}")
+    await ctx.send(f"Reloaded {extension}")
 
-@client.command
-@lightbulb.add_checks(is_owner)
-@lightbulb.option("ext_name", "which ext u wanna reload?")
-@lightbulb.command("reload", "reloads an extension", hidden=True)
-@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
-async def reload(ctx):
-    ext = ctx.options.ext_name
-    try:
-        client.reload_extensions(f"extensions.{ext}")
-        await ctx.respond(f"{ext} reloaded!")
-    except lightbulb.errors.ExtensionNotLoaded:
-        await ctx.respond(f"{ext} not loaded!")
-
-
-client.run(
-    status=hikari.Status.ONLINE,
-    activity=hikari.Activity(
-    name="just a cool bot",
-    type=hikari.ActivityType.PLAYING
-    )
-)
+async def main():
+    await cogs()
+    await bot.start(os.getenv("TOKEN"))
+    
+if __name__ == "__main__":
+    asyncio.run(main())
