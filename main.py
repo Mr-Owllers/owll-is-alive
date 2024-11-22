@@ -4,13 +4,15 @@ from datetime import datetime
 import psutil
 
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 from dotenv import load_dotenv
 from logpy import Logger
 from logpy.ansi import BackgroundColor, Effect, ForegroundColor
 from logpy.log import Format, Level
 import asyncio
 from pretty_help import PrettyHelp, AppMenu
+
+from itertools import cycle
 
 start_time = datetime.now()
 
@@ -38,19 +40,39 @@ def get_owners():
 
     return owners
 
-def get_prefix(bot, message):
+def get_prefix(message):
     with open("prefix.json", "r") as f:
         prefix = json.load(f)
 
     return prefix.get(str(message.guild.id), "owl.")
 
 bot = commands.Bot(
-    command_prefix=get_prefix, help_command=help_command, intents=intents, owner_ids=get_owners()
+    command_prefix=get_prefix, help_command=help_command, intents=intents, owner_ids=get_owners(), case_insensitive=True
 )
 
 @bot.event
 async def on_ready():
     logger.log(f"{bot.user.name} is alive!", info)
+    change_status.start()
+
+cycle_act = cycle(
+    [
+        "with knives",
+        "GTA6",
+        "russian roulette",
+        "with fire",
+        "the GAME, that you lost just now",
+        "with your feelings",
+        "with the meaning of life",
+        "existential crisis simulator 2.0",
+        "under your skin",
+    ]
+)
+
+@tasks.loop(seconds=60)
+async def change_status():
+    await bot.change_presence(status=discord.Status.online, activity=discord.Game(next(cycle_act)))
+
 
 @bot.hybrid_command(help="ping the bot")
 async def ping(ctx):
