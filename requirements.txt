@@ -1,11 +1,11 @@
 aiohttp
 log.py
-discord[voice]
+discord
 praw
 python-dotenv
 datetime
 psutil
-lavasnek_rs
-uvloop
-spotipy
 asyncio
+discord-pretty-help
+discord-paginator
+jishaku

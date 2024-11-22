@@ -1,22 +1,24 @@
-# owll
+# :owl: owll
 
-hi! this is my first discord bot that i made in python
+This is a discord bot made in python  
+it has many features like:
 
-i previously used [replit](https://replit.com) and [uptimerobot](https://uptimerobot.com) to host my bot but because of some issues i decided to host it on orcale cloud
++ Moderation
++ Fun
++ Interaction
++ Utility
++ Memes
++ and many more
 
-click [here](https://dsc.gg/owll) to add my bot on your server
+click [here](https://discord.com/api/oauth2/authorize?client_id=875328150165413918&permissions=8&scope=bot) to add my bot on your server  
+and click [here](https://discord.gg/DxyUU85Ca9) to join my support server
 
-> bot's prefix is owl.
+> bot's default prefix is `owl.`
 
-# Changlog
+## Changlog
 
-v1.0.6 [changelog](CHANGELOG.md)
+v2.0 [CHANGELOG](CHANGELOG.md)
 
-# Authors
-
-+ Mr.Owllers || [Github](github.com/Mr-Owllers)  
-+ Erdi || [Github](github.com/Erdi-GitHub)
-
-# License and copyright
+## License
 
 Licensed under [MIT license](LICENSE)

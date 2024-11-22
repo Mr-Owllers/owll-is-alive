@@ -1,10 +1,10 @@
+from ast import alias
 import json
 import random
 import discord
 from discord.ext import commands
 
-class Fun(commands.Cog, description="Fun commands"):
-    """ Fun commands """
+class Fun(commands.Cog, description="fun and games!"):
     def __init__(self, bot):
         self.bot = bot
 
@@ -24,7 +24,7 @@ class Fun(commands.Cog, description="Fun commands"):
     async def flip(self, ctx):
         await ctx.send(f":coin: You flipped a {random.choice(['Heads', 'Tails'])}")
 
-    @commands.hybrid_command(help="Say something")
+    @commands.hybrid_command(help="Say something", aliases=["echo"])
     async def say(self, ctx, *, message):
         await ctx.send(message)
 
@@ -39,12 +39,11 @@ class Fun(commands.Cog, description="Fun commands"):
 
     @commands.hybrid_command(help="Ask the ball", name="11ball")
     async def ball(self, ctx, *, question):
-        responses = json.loads(open("../responses.json", "r").read())
+        responses = json.loads(open("responses.json", "r").read())
         await ctx.send(
-            f"Question: {ctx.options.question}\nAnswer: {random.choice(responses)}"
+            f"Question: {question}\nAnswer: {random.choice(responses)}"
         )
-        
-    # rock paper scissors
+
     @commands.hybrid_command(help="Rock, Paper, Scissors")
     async def rps(self, ctx, choice):
         choices = ["rock", "paper", "scissors"]
@@ -62,29 +61,33 @@ class Fun(commands.Cog, description="Fun commands"):
                 await ctx.send(f"Bot chose {bot_choice}, you lose!")
         else:
             await ctx.send("Invalid choice, please choose rock, paper, or scissors")
-            
+
     @commands.hybrid_command(help="Guess a random number")
     async def guess(self, ctx):
-        number = random.randint(1, 100)
-        await ctx.send("I'm thinking of a number between 1 and 100, what is it? type 'im_a_loser' to be a loser")
+        number = random.randint(0, 100)
+        await ctx.send("I'm thinking of a number between 0 and 100, what is it? type 'im_a_loser' to be a loser")
         def check(m):
             return m.author == ctx.author and m.channel == ctx.channel
+        guesses = 0
         while True:
-                guess = await self.bot.wait_for("message", check=check)
-                if guess.content.isdigit():
-                    if int(guess.content) == number:
-                        await ctx.send(f"Congratulations! The number was {number}")
-                        break
-                    elif int(guess.content) > number:
-                        await ctx.send("Too high!")
-                    elif int(guess.content) < number:
-                        await ctx.send("Too low!")
-                elif guess.content.lower() == "im_a_loser":
-                    await ctx.send(f"The number was {number}, loser!")
+            guess = await self.bot.wait_for("message", check=check)
+            if guess.content.isdigit():
+                guesses += 1 
+                if int(guess.content) == number:
+                    await ctx.send(f"Congratulations! The number was {number}\nit took you {guesses} guesses to get it")
                     break
-                else:
-                    await ctx.send("Invalid input, please enter a number")
-            
+                elif int(guess.content) > number and int(guess.content) <= 100:
+                    await ctx.send(f"Too high!\nguess no. {guesses}")
+                elif int(guess.content) < number and int(guess.content) >= 0:
+                    await ctx.send(f"Too low!\nguess no. {guesses}")
+                elif int(guess.content) < 0 or int(guess.content) > 100:
+                    await ctx.send(f"Number out of range, what are you even trying?\nguess no. {guesses}")
+            elif guess.content.lower() == "im_a_loser":
+                await ctx.send(f"The number was {number}, loser!\nyou took {guesses} guesses and still couldn't get it")
+                break
+            else:
+                await ctx.send("Invalid input, please enter a number")
+
     @commands.hybrid_command(help="Fight the bot")
     async def fight(self, ctx):
         await ctx.send("1v1 les go! type 'im_a_loser' to be a loser")
@@ -98,10 +101,10 @@ class Fun(commands.Cog, description="Fun commands"):
             await ctx.send(f"your health: {min(player_health, 20)}\nbot health: {min(bot_health, 20)}\nChoose your attack: punch, kick, bite, spell, or heal")
             choices = ["punch", "kick", "bite", "spell", "heal"]
             player_choice = await self.bot.wait_for("message", check=check)
-            
+
             player_health = min(player_health, 20)
             bot_health = min(bot_health, 20)
-            
+
             if player_choice.content.lower() in choices:
                 if player_choice.content.lower() == "punch":
                     weak = ["your punch was so weak, it healed the bot", "you missed", "was that a punch or a tickle?", "you failed to even make a fist", "HAHAHA WHAT WAS THAT??!"]
@@ -148,7 +151,7 @@ class Fun(commands.Cog, description="Fun commands"):
                     else:
                         player_health += player_attack
                         await ctx.send(f"you chose: {player_choice.content}\n{random.choice(strong)}\nyou gained {player_attack} health\nyour health: {min(player_health, 20)}\nbot health: {min(bot_health, 20)}")
-                
+
                 bot_choice = random.choice(choices)
                 if bot_choice == "punch":
                     weak = ["the bot's punch was so weak, it healed you", "the bot missed", "was that a punch or a tickle?", "the bot failed to even make a fist", "LOL THE BOT CAN'T EVEN PUNCH"]
@@ -201,14 +204,18 @@ class Fun(commands.Cog, description="Fun commands"):
             else:
                 player_health -= 1
                 await ctx.send("Invalid choice, please choose punch, kick, bite, spell, or heal. You lost 1 health as a penalty")
-                
+
             if bot_health <= 0: 
                 await ctx.send("You win! bot's health reached 0")
+                if player_health <= 0:
+                    await ctx.send("You both lose! its a tie")
                 break
             elif player_health <= 0:
                 await ctx.send("You lose! your health reached 0")
+                if bot_health <= 0:
+                    await ctx.send("You both lose! its a tie")
                 break
-                
-        
+
+
 async def setup(bot):
     await bot.add_cog(Fun(bot))
