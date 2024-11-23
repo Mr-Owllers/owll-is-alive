@@ -5,6 +5,8 @@
 - [FIXED]: some bugs in the code
 - [ADDED]: logging errors into files ([logs](logs))
 - [CHANGE]: cleaned up the directories and made everything more organized
+- [ADDED]: 2 more commands `get_prefix` and `sync`
+- [FIXED]: slash commands not working properly
 
 ## v2.0 | 23 Nov 2024 | Rewrite
 

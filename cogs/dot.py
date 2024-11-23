@@ -10,8 +10,8 @@ class Dot(commands.Cog, description="dootle joke"):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(help="find ppl with the same prefix")
-    async def finddot(self, ctx, *args):
+    @commands.hybrid_command(help="find ppl with the same prefix")
+    async def finddot(self, ctx, *, args):
         if not args:
             args = ["."]
 
@@ -49,7 +49,7 @@ class Dot(commands.Cog, description="dootle joke"):
                 message = f'No users with prefix "{prefix}" found'
                 await ctx.send(message)
 
-    @commands.command(help="why dot??")
+    @commands.hybrid_command(help="why dot??")
     async def whydot(self, ctx):
         """why dot??"""
         embed = discord.Embed(

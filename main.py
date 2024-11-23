@@ -56,6 +56,11 @@ bot = commands.Bot(
 async def on_ready():
     logger.log(f"{bot.user.name} is alive!", info)
     change_status.start()
+    try:
+        synced = await bot.tree.sync()
+        logger.log(f"Synced {len(synced)} commands.", info)
+    except Exception as e:
+        print(e)
 
 cycle_act = cycle(
     [
@@ -79,6 +84,22 @@ async def change_status():
 @bot.hybrid_command(help="ping the bot")
 async def ping(ctx):
     await ctx.send(f":ping_pong: Pong!\n{round(bot.latency * 1000)}ms")
+    
+@bot.hybrid_command(help="get the prefix")
+async def get_prefix(ctx):
+    with open("data/prefix.json", "r") as f:
+        prefix = json.load(f)
+        
+    await ctx.send(f"My prefix is `{prefix.get(str(ctx.guild.id), 'owl.')}`")
+    
+@bot.hybrid_command(help="sync commands")
+@commands.is_owner()
+async def sync(ctx):
+    try:
+        synced = await bot.tree.sync()
+        await ctx.send(f"Synced {len(synced)} commands.")
+    except Exception as e:
+        await ctx.send(f"Error: {e}")
 
 @bot.hybrid_command(help="get bot info")
 async def stats(ctx):

@@ -81,32 +81,32 @@ class Moderation(commands.Cog, description="mod stuff"):
     async def purge(self, ctx, limit: int):
         await ctx.channel.purge(limit=limit + 1)
         await ctx.send(f"{limit} messages deleted", delete_after=5)
-    
+
     @commands.hybrid_command(help="change the prefix")
     @commands.has_permissions(manage_guild=True)
     async def prefix(self, ctx, new_prefix):
-        with open("prefix.json", "r") as f:
+        with open("data/prefix.json", "r") as f:
             prefix = json.load(f)
-        
+
         if prefix.get(str(ctx.guild.id)) == new_prefix:
             await ctx.send("Prefix is already the same")
         elif new_prefix == "owl.":
             if str(ctx.guild.id) in prefix:
                 prefix.pop(str(ctx.guild.id))
-                with open("prefix.json", "w") as f:
+                with open("data/prefix.json", "w") as f:
                     json.dump(prefix, f, indent=4)
             await ctx.send("Prefix removed")
         else:
             prefix[str(ctx.guild.id)] = new_prefix
-            with open("prefix.json", "w") as f:
+            with open("data/prefix.json", "w") as f:
                 json.dump(prefix, f, indent=4)
-                
+
         # get ctx.guild.me.display_name but remove everything in []
         name = ctx.guild.me.display_name if "[" not in ctx.guild.me.display_name else ctx.guild.me.display_name.split("]")[1].strip()
-                
+
         await ctx.send(f"Prefix changed to {new_prefix}")
         await ctx.guild.me.edit(nick=f"[{new_prefix}] {name}")
-        
+
     @commands.hybrid_command(help="set nickname")
     @commands.has_permissions(manage_nicknames=True)
     async def nick(self, ctx, member: discord.Member, *, nickname):
