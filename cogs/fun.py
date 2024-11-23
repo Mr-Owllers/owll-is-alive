@@ -38,7 +38,7 @@ class Fun(commands.Cog, description="fun and games!"):
 
     @commands.hybrid_command(help="Ask the ball", name="11ball")
     async def ball(self, ctx, *, question):
-        responses = json.loads(open("responses.json", "r").read())
+        responses = json.loads(open("data/responses.json", "r").read())
         await ctx.send(
             f"Question: {question}\nAnswer: {random.choice(responses)}"
         )

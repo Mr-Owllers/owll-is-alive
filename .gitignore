@@ -4,7 +4,7 @@ owners.json
 extensions/__pycache__/
 balances.json
 application.yml
-logs/
+logs/*
 Lavalink.jar
 nohup.out
 toidua.json

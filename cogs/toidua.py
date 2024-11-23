@@ -11,7 +11,7 @@ class Toidua(commands.Cog, description="a TODO list like Idea-manager™️"):
     @commands.hybrid_command(help="add an idea to the list")
     async def add(self, ctx, idea, *, note=None):
         author_id = str(ctx.author.id)
-        with open("toidua.json", "r") as f:
+        with open("data/toidua.json", "r") as f:
             toidua = json.load(f)
 
         if author_id not in toidua:
@@ -27,7 +27,7 @@ class Toidua(commands.Cog, description="a TODO list like Idea-manager™️"):
             "date": f"<t:{date}:f>"
         })
 
-        with open("toidua.json", "w") as f:
+        with open("data/toidua.json", "w") as f:
             json.dump(toidua, f, indent=4)
 
         await ctx.send(f"Added idea: {idea}")
@@ -35,7 +35,7 @@ class Toidua(commands.Cog, description="a TODO list like Idea-manager™️"):
     @commands.hybrid_command(help="list your ideas", name="list", aliases=["ideas", "ls", "view"])
     async def _list(self, ctx):
         author_id = str(ctx.author.id)
-        with open("toidua.json", "r") as f:
+        with open("data/toidua.json", "r") as f:
             toidua = json.load(f)
 
         if author_id not in toidua:
@@ -70,7 +70,7 @@ class Toidua(commands.Cog, description="a TODO list like Idea-manager™️"):
     @commands.hybrid_command(help="remove an idea")
     async def remove(self, ctx, index: int):
         author_id = str(ctx.author.id)
-        with open("toidua.json", "r") as f:
+        with open("data/toidua.json", "r") as f:
             toidua = json.load(f)
 
         if author_id not in toidua:
@@ -83,7 +83,7 @@ class Toidua(commands.Cog, description="a TODO list like Idea-manager™️"):
                 return await ctx.send("Invalid index")
 
             idea = ideas.pop(index)
-            with open("toidua.json", "w") as f:
+            with open("data/toidua.json", "w") as f:
                 json.dump(toidua, f, indent=4)
 
         await ctx.send(f"Removed idea: {idea['idea']}")
@@ -91,7 +91,7 @@ class Toidua(commands.Cog, description="a TODO list like Idea-manager™️"):
     @commands.hybrid_command(help="change the status of an idea")
     async def status(self, ctx, index: int, status):
         author_id = str(ctx.author.id)
-        with open("toidua.json", "r") as f:
+        with open("data/toidua.json", "r") as f:
             toidua = json.load(f)
 
         if author_id not in toidua:
@@ -109,7 +109,7 @@ class Toidua(commands.Cog, description="a TODO list like Idea-manager™️"):
             if ideas[index]["status"] == status:
                 return await ctx.send("Status is already the same")
                 
-            with open("toidua.json", "w") as f:
+            with open("data/toidua.json", "w") as f:
                 if status == "0":
                     ideas[index]["status"] = "OPEN"
                 elif status == "1":

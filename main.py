@@ -19,6 +19,9 @@ start_time = datetime.now()
 custom_format = Format("$date $time $level     $message", "%Y-%m-%d", "%H:%M:%S")
 logger = Logger(custom_format)
 info = Level("INFO", ForegroundColor.green, BackgroundColor.black, Effect.bold)
+logger.save = True
+logger.filepath = "./logs"
+logger.file_extension = "log"
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -30,13 +33,13 @@ help_command = PrettyHelp(menu=menu, no_category="Extra")
 
 # get owners
 def get_owners():
-    with open("owners.json", "r") as f:
+    with open("data/owners.json", "r") as f:
         owners = json.load(f)
 
     return owners
 
 def get_prefix(bot, message):
-    with open("prefix.json", "r") as f:
+    with open("data/prefix.json", "r") as f:
         prefix = json.load(f)
 
     return prefix.get(str(message.guild.id), "owl.")
@@ -156,7 +159,7 @@ async def cogs():
         if filename.endswith(".py"):
             await bot.load_extension(f"cogs.{filename[:-3]}")
             logger.log(f"Loaded cog {filename[:-3]}", info)
-        
+
     await bot.load_extension("jishaku")
 
 @bot.hybrid_command(hidden=True)

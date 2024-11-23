@@ -6,6 +6,9 @@ from logpy.log import Format, Level
 custom_format = Format("$date $time $level      $message", "%Y-%m-%d", "%H:%M:%S")
 logger = Logger(custom_format)
 err = Level("ERR", ForegroundColor.red, BackgroundColor.black, Effect.bold)
+logger.save = True
+logger.filepath = "./logs"
+logger.file_extension = "log"
 
 class ErrorHandler(commands.Cog):
     def __init__(self, bot):
