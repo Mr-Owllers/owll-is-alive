@@ -1,4 +1,3 @@
-from ast import alias
 import json
 import random
 import discord

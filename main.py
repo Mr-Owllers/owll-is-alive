@@ -18,12 +18,7 @@ start_time = datetime.now()
 
 custom_format = Format("$date $time $level     $message", "%Y-%m-%d", "%H:%M:%S")
 logger = Logger(custom_format)
-info = Level(
-    "INFO",
-    ForegroundColor.green,
-    BackgroundColor.black,
-    Effect.bold
-)
+info = Level("INFO", ForegroundColor.green, BackgroundColor.black, Effect.bold)
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -40,14 +35,18 @@ def get_owners():
 
     return owners
 
-def get_prefix(message):
+def get_prefix(bot, message):
     with open("prefix.json", "r") as f:
         prefix = json.load(f)
 
     return prefix.get(str(message.guild.id), "owl.")
 
 bot = commands.Bot(
-    command_prefix=get_prefix, help_command=help_command, intents=intents, owner_ids=get_owners(), case_insensitive=True
+    command_prefix=get_prefix,
+    help_command=help_command,
+    intents=intents,
+    owner_ids=get_owners(),
+    case_insensitive=True,
 )
 
 @bot.event
