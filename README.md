@@ -32,8 +32,8 @@ v2.0.1 [CHANGELOG](CHANGELOG.md)
     ```bash
     git clone https://github.com/Mr-Owllers/owll-is-alive
     cd owll-is-alive
-    python -m venv venv
-    source venv/bin/activate
+    python -m venv env
+    source env/bin/activate
     ```
 
 2. Install the requirements
