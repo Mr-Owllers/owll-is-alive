@@ -2,6 +2,7 @@ import json
 import random
 import discord
 from discord.ext import commands
+import typing
 
 class Fun(commands.Cog, description="fun and games!"):
     def __init__(self, bot):
@@ -24,10 +25,12 @@ class Fun(commands.Cog, description="fun and games!"):
         await ctx.send(f":coin: You flipped a {random.choice(['Heads', 'Tails'])}")
 
     @commands.hybrid_command(help="Say something", aliases=["echo"])
+    @discord.app_commands.describe(message="The message to send")
     async def say(self, ctx, *, message):
         await ctx.send(message)
 
     @commands.hybrid_command(help="Say something in an embed")
+    @discord.app_commands.describe(title="The title of the embed", message="The message to send")
     async def embed(self, ctx, title: str=None, *, message):
         embed = discord.Embed(
             title=title,
@@ -37,14 +40,16 @@ class Fun(commands.Cog, description="fun and games!"):
         await ctx.send(embed=embed)
 
     @commands.hybrid_command(help="Ask the ball", name="11ball")
-    async def ball(self, ctx, *, question):
+    @discord.app_commands.describe(question="The question to ask the 11ball")
+    async def ball(self, ctx, *, question: str):
         responses = json.loads(open("data/responses.json", "r").read())
         await ctx.send(
             f"Question: {question}\nAnswer: {random.choice(responses)}"
         )
 
     @commands.hybrid_command(help="Rock, Paper, Scissors")
-    async def rps(self, ctx, choice):
+    @discord.app_commands.describe(choice="Choose rock, paper, or scissors")
+    async def rps(self, ctx, choice: typing.Literal["rock", "paper", "scissors"]):
         choices = ["rock", "paper", "scissors"]
         bot_choice = random.choice(choices)
         if choice.lower() in choices:

@@ -8,8 +8,21 @@ class Toidua(commands.Cog, description="a TODO list like Idea-manager™️"):
     def __init__(self, bot):
         self.bot = bot
 
+    # use flagconverter to add a description for the parameters
+    class AddFlags(commands.FlagConverter):
+        idea: str = commands.flag(description="the idea")
+        note: str = commands.flag(default=None, description="a note for the idea")
+
+    class RFlags(commands.FlagConverter):
+        index: int = commands.flag(description="the index of the idea")
+        
+    class SFlags(commands.FlagConverter):
+        index: int = commands.flag(description="the index of the idea")
+        status: int = commands.flag(description="the status, CODES: 0=\"OPEN\" 1=\"IN PROGRESS\" 2=\"DONE\"")
+
     @commands.hybrid_command(help="add an idea to the list")
-    async def add(self, ctx, idea, *, note=None):
+    # add a description for the parameters
+    async def add(self, ctx, flags: AddFlags):
         author_id = str(ctx.author.id)
         with open("data/toidua.json", "r") as f:
             toidua = json.load(f)
@@ -20,17 +33,19 @@ class Toidua(commands.Cog, description="a TODO list like Idea-manager™️"):
         date = datetime.now().timestamp()
         date = int(date)
 
-        toidua[author_id]["ideas"].append({
-            "idea": idea,
-            "note": note,
-            "status": "OPEN",
-            "date": f"<t:{date}:f>"
-        })
+        toidua[author_id]["ideas"].append(
+            {
+                "idea": flags.idea,
+                "note": flags.note,
+                "status": "OPEN",
+                "date": f"<t:{date}:f>",
+            }
+        )
 
         with open("data/toidua.json", "w") as f:
             json.dump(toidua, f, indent=4)
 
-        await ctx.send(f"Added idea: {idea}")
+        await ctx.send(f"Added idea: {flags.idea}")
 
     @commands.hybrid_command(help="list your ideas", name="list", aliases=["ideas", "ls", "view"])
     async def _list(self, ctx):
@@ -68,7 +83,7 @@ class Toidua(commands.Cog, description="a TODO list like Idea-manager™️"):
             await ctx.send(embed=output.embed, view=output.view)
 
     @commands.hybrid_command(help="remove an idea")
-    async def remove(self, ctx, index: int):
+    async def remove(self, ctx, flags: RFlags):
         author_id = str(ctx.author.id)
         with open("data/toidua.json", "r") as f:
             toidua = json.load(f)
@@ -79,17 +94,17 @@ class Toidua(commands.Cog, description="a TODO list like Idea-manager™️"):
             return await ctx.send("You don't have any ideas!")
         else:
             ideas = toidua[author_id]["ideas"]
-            if index >= len(ideas):
+            if flags.index >= len(ideas):
                 return await ctx.send("Invalid index")
 
-            idea = ideas.pop(index)
+            idea = ideas.pop(flags.index)
             with open("data/toidua.json", "w") as f:
                 json.dump(toidua, f, indent=4)
 
         await ctx.send(f"Removed idea: {idea['idea']}")
 
     @commands.hybrid_command(help="change the status of an idea")
-    async def status(self, ctx, index: int, status):
+    async def status(self, ctx, flags: SFlags):
         author_id = str(ctx.author.id)
         with open("data/toidua.json", "r") as f:
             toidua = json.load(f)
@@ -100,33 +115,27 @@ class Toidua(commands.Cog, description="a TODO list like Idea-manager™️"):
             return await ctx.send("You don't have any ideas!")
         else:
             ideas = toidua[author_id]["ideas"]
-            if index >= len(ideas):
+            if flags.index >= len(ideas):
                 return await ctx.send("Invalid index")
 
-            if status not in ["0", "1", "2"]:
+            if flags.status not in ["0", "1", "2"]:
                 return await ctx.send("Invalid status\nCodes:\n0: **OPEN**\n1: **IN PROGRESS**\n2: **DONE**")
 
-            if ideas[index]["status"] == status:
+            if ideas[flags.index]["status"] == flags.status:
                 return await ctx.send("Status is already the same")
-                
-            with open("data/toidua.json", "w") as f:
-                if status == "0":
-                    ideas[index]["status"] = "OPEN"
-                elif status == "1":
-                    ideas[index]["status"] = "IN PROGRESS"
-                elif status == "2":
-                    ideas[index]["status"] = "DONE"
-                    
-                json.dump(toidua, f, indent=4)
-            
-            if status == "0":
+
+            if flags.status == "0":
                 status = "OPEN"
-            elif status == "1":
+            elif flags.status == "1":
                 status = "IN PROGRESS"
-            elif status == "2":
+            elif flags.status == "2":
                 status = "DONE"
 
-            await ctx.send(f"Changed status of idea {index} to **{status}**")
+            with open("data/toidua.json", "w") as f:
+                ideas[flags.index]["status"] = status
+                json.dump(toidua, f, indent=4)
+
+            await ctx.send(f"Changed status of idea {flags.index} to **{status}**")
 
 async def setup(bot):
     await bot.add_cog(Toidua(bot))        

@@ -1,4 +1,5 @@
 import json
+from sys import flags
 import discord
 from discord.ext import commands
 from dpy_paginator import paginate
@@ -6,29 +7,41 @@ from dpy_paginator import paginate
 class Moderation(commands.Cog, description="mod stuff"):
     def __init__(self, bot):
         self.bot = bot
+        
+    class DefaultFlags(commands.FlagConverter):
+        member: discord.Member = commands.flag(description="the member to act on")
+        reason: str = commands.flag(default=None, description="the reason for the action")
+        
+    class UnbanFlags(commands.FlagConverter):
+        member: str = commands.flag(description="the member to unban")
+        reason: str = commands.flag(default=None, description="the reason for the action")
+        
+    class NickFlags(commands.FlagConverter):
+        member: discord.Member = commands.flag(description="the member to act on")
+        nickname: str = commands.flag(description="the new nickname")
 
     @commands.hybrid_command(help="kick a member")
     @commands.has_permissions(kick_members=True)
-    async def kick(self, ctx, member: discord.Member, *, reason=None):
-        await member.kick(reason=reason)
-        await ctx.send(f"{member.mention} has been kicked.")
+    async def kick(self, ctx, flags: DefaultFlags):
+        await flags.member.kick(reason=flags.reason)
+        await ctx.send(f"{flags.member.mention} has been kicked.")
 
     @commands.hybrid_command(help="ban a member")
     @commands.has_permissions(ban_members=True)
-    async def ban(self, ctx, member: discord.Member, *, reason=None):
-        await member.ban(reason=reason)
-        await ctx.send(f"{member.mention} has been banned.")
+    async def ban(self, ctx, flags: DefaultFlags):
+        await flags.member.ban(reason=flags.reason)
+        await ctx.send(f"{flags.member.mention} has been banned.")
 
     @commands.hybrid_command(help="unban a member")
     @commands.has_permissions(ban_members=True)
-    async def unban(self, ctx, *, member):
+    async def unban(self, ctx, flags: UnbanFlags):
         banned_users = await ctx.guild.bans()
-        if member.isdigit():
-            user = discord.Object(id=int(member))
-        elif member.startswith("<@") and member.endswith(">"):
-            user = discord.Object(id=int(member[2:-1]))
+        if flags.member.isdigit():
+            user = discord.Object(id=int(flags.member))
+        elif flags.member.startswith("<@") and flags.member.endswith(">"):
+            user = discord.Object(id=int(flags.member[2:-1]))
         else:
-            user = discord.utils.get(banned_users, user__name=member)
+            user = discord.utils.get(banned_users, name=flags.member)
             if user is None:
                 raise commands.BadArgument
 
@@ -36,7 +49,7 @@ class Moderation(commands.Cog, description="mod stuff"):
             await ctx.send("User is not banned.")
             return
 
-        await ctx.guild.unban(user)
+        await ctx.guild.unban(user, reason=flags.reason)
         await ctx.send(f"{user.name} has been unbanned.")
 
     @commands.hybrid_command(help="check bans")
@@ -78,13 +91,15 @@ class Moderation(commands.Cog, description="mod stuff"):
 
     @commands.hybrid_command(help="purge messages")
     @commands.has_permissions(manage_messages=True)
-    async def purge(self, ctx, limit: int):
+    async def purge(self, ctx, limit: int = 5):
+        if limit < 1 or limit > 100:
+            return await ctx.send("Invalid limit. Must be between 1 and 100")
         await ctx.channel.purge(limit=limit + 1)
         await ctx.send(f"{limit} messages deleted", delete_after=5)
 
     @commands.hybrid_command(help="change the prefix")
     @commands.has_permissions(manage_guild=True)
-    async def prefix(self, ctx, new_prefix):
+    async def prefix(self, ctx, new_prefix: str = "owl."):
         with open("data/prefix.json", "r") as f:
             prefix = json.load(f)
 
@@ -109,9 +124,9 @@ class Moderation(commands.Cog, description="mod stuff"):
 
     @commands.hybrid_command(help="set nickname")
     @commands.has_permissions(manage_nicknames=True)
-    async def nick(self, ctx, member: discord.Member, *, nickname):
-        await member.edit(nick=nickname)
-        await ctx.send(f"{member.mention}'s nickname has been changed to {nickname}")
+    async def nick(self, ctx, flags: NickFlags):
+        await flags.member.edit(nick=flags.nickname)
+        await ctx.send(f"{flags.member.mention}'s nickname has been changed to {flags.nickname}")
 
 
 async def setup(bot):

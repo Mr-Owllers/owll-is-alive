@@ -20,6 +20,7 @@ class Memes(commands.Cog, description="MEMES!"):
         self.bot = bot
 
     @commands.hybrid_command(help="get a random meme from reddit")
+    @discord.app_commands.describe(subred="subreddit to get the meme from")
     async def reddit(self, ctx, *, subred="memes"):
         async with ctx.typing():
             try:
@@ -61,6 +62,7 @@ class Memes(commands.Cog, description="MEMES!"):
                 await ctx.send(f"oops, ig that subreddit has some problems? likely banned!\n```diff\n-ERROR: {e}```")
     
     @commands.hybrid_command(help="get a random nsfw post from reddit")
+    @discord.app_commands.describe(subred="subreddit to get the nsfw post from")
     async def nsfw(self, ctx, subred="hentai"):
         async with ctx.typing():
             try:

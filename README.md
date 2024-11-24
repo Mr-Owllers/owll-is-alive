@@ -17,7 +17,7 @@ and click [here](https://discord.gg/DxyUU85Ca9) to join my support server
 
 ## Changlog
 
-v2.0.1 [CHANGELOG](CHANGELOG.md)
+v2.1 [CHANGELOG](CHANGELOG.md)
 
 ## Self Hosting
 

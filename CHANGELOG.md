@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v2.1 | 24 Nov 2024 | Small Update
+
+- [CHANGED]: the action commands only consist of two commands now, `interact` and `react` so the code is not that messy anymore
+- [CHANGED]: the api for the action commands from waifu.pics to nekos.best
+- [ADDED]: description to all parameters of all commands! + made /commands neater
+
 ## v2.0.1 | 23 Nov 2024 | Minor Bug fixes
 
 - [FIXED]: some bugs in the code

@@ -11,7 +11,8 @@ class Dot(commands.Cog, description="dootle joke"):
         self.bot = bot
 
     @commands.hybrid_command(help="find ppl with the same prefix")
-    async def finddot(self, ctx, *, args):
+    @discord.app_commands.describe(args="what to search for")
+    async def finddot(self, ctx, *, args=None):
         if not args:
             args = ["."]
 
@@ -51,7 +52,6 @@ class Dot(commands.Cog, description="dootle joke"):
 
     @commands.hybrid_command(help="why dot??")
     async def whydot(self, ctx):
-        """why dot??"""
         embed = discord.Embed(
             title="why dot???",
             description="its an inside joke from dootle ville (a friend's server)",
