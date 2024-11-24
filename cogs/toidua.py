@@ -70,7 +70,8 @@ class Toidua(commands.Cog, description="a TODO list like Idea-manager™️"):
                 )
                 embed.set_footer(text="<3")
                 for n, idea in enumerate(page):
-                    embed.add_field(name=f"Idea {n}:", value=idea, inline=False)
+                    index = n + i
+                    embed.add_field(name=f"Idea {index}:", value=idea, inline=False)
 
                 embeds.append(embed)
 
