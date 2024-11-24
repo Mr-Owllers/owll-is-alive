@@ -63,7 +63,7 @@ class Actions(commands.Cog, description="interact using gifs!"):
                     embed.title = f"{ctx.author.name} holds {flags.member.name}'s hand"
                 else:
                     embed.title = f"{ctx.author.name} {flags.action}s {flags.member.name}"
-                embed.set_footer(text=f"gif from {data["anime_name"]}")
+                embed.set_footer(text=f"gif from {data['anime_name']}")
                 embed.set_image(url=data["url"])
                 await ctx.send(embed=embed)
 
@@ -90,7 +90,7 @@ class Actions(commands.Cog, description="interact using gifs!"):
                     color=ctx.author.color,
                     timestamp=datetime.now(),
                 )
-                embed.set_footer(text=f"gif from {data["anime_name"]}")
+                embed.set_footer(text=f"gif from {data['anime_name']}")
                 embed.set_image(url=data["url"])
                 await ctx.send(embed=embed)
 
