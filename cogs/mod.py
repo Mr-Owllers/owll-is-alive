@@ -78,8 +78,9 @@ class Moderation(commands.Cog, description="mod stuff"):
                     color=ctx.author.color
                 )
                 for n, users in enumerate(bans):
+                    index = n + i + 1
                     embed.add_field(
-                        name=f"Banned #{n+1}",
+                        name=f"Banned #{index}",
                         value=f"{users.user} ({users.user.id}): {users.reason}",
                         inline=False
                     )
